@@ -1,0 +1,205 @@
+<?php 
+	if( Mage::getStoreConfig('productselector/main/activation') == 1):
+?>
+
+<?php
+    /* Retrieve needed data */
+    $selectorTitle = Mage::getStoreConfig('productselector/main/title');
+    $attributeSetId = Mage::getStoreConfig('productselector/main/attribute_set_id');
+    $selectorAttributes = Mage::helper('productselector/data')->getSelectorAttributes($attributeSetId);
+?>
+
+<div class="product_selector car_selector">
+    <div class="content container">
+        <div id="selector">
+            <div id="wrapper_selector">
+                <div class="product_selector_wrapper">
+                    <?php if ($selectorTitle): ?>
+                        <div class="bloc_title title">
+                            <span><?= $selectorTitle; ?></span>
+                        </div>
+                    <?php endif; ?>
+
+                    <div class="selector_form">
+                        <form id="occ_validate" action="" method="get">
+                            <?php
+                                foreach ($selectorAttributes as $selectorAttribute):
+                                    $code = $selectorAttribute->getAttributeCode();
+                                    $label = $selectorAttribute->getStoreLabel();
+                            ?>
+
+                                <div id="list_<?= $code; ?>" class="selector selector_<?= $code; ?>">
+                                    <label id="list_label_<?= $code; ?>" for="list_select_<?= $code; ?>"><?= $label; ?></label>
+                                    <select id="list_select_<?= $code; ?>" class="list_select" name="list_select_<?= $code; ?>" data-attribute="<?= $code; ?>">
+                                        <option value=""><?= $label; ?></option>
+                                    </select>
+                                </div>
+                                <div id="selected_<?= $code; ?>" class="selected selected_<?= $code; ?>" style="display:none;" data-attribute="<?= $code; ?>">
+                                    <label for="list_select_<?= $code; ?>"><?= $label; ?> : </label>
+                                    <span id="<?= $code; ?>_product_value" class="product_value">product_value</span>
+                                    <span class="close" title="<?= $this->__("Delete filter"); ?>"></span>
+                                </div>
+
+                            <?php endforeach; ?>
+
+                            <div class="submit">
+                                <a id="find_products" class="button btn-maincolor" href="" rel="nofollow"><?= $this->__("Search"); ?></a>
+                                <img class="loader" src="<?php echo $this->getSkinUrl('images/loader.gif'); ?>" style="display:none;"/>
+                            </div>
+
+                            <div id="occ_product_count">
+                              <span id="number_of_products"></span>
+                              <span id="occ_voitures"><?= $this->__("products"); ?></span>
+                              <span id="occ_legende"><?= $this->__("corresponding to your research"); ?></span>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<?php // Following JS has to be in template because of dynamically generated elements */ ?>
+<script type="text/javascript">
+//<![CDATA[
+var baseUrl = "<?php echo $this->getBaseUrl()?>";
+var controllerUrl = "productselector/index/productSelector?";
+
+function input_get_selected(item)
+{
+    if (jQuery(item).length && jQuery(item).val() == 0)
+        return 0;
+    else
+        return jQuery(item).val();
+}
+function input_set_selected(item,value)
+{
+    jQuery(item).val(value);
+    jQuery('#uniform-' + item.substr(1) + ' span').html(jQuery(item +  ' option:selected').text());
+}
+function input_fill_options(data)
+{
+    var options = "", i = 0;
+    for (i = 0; i < data.length; i++)
+        options += '<option value="' +  data[i]["value"] + '">' + data[i]["label"]  + "</option>\n";
+    return options;
+}
+function gotoData()
+{
+    var target = jQuery(this).attr("data-href");
+    window.location.href = target;
+}
+
+function refresh_form()
+{
+    jQuery('#find_products').css('display', 'none');
+    jQuery('.loader').css('display', 'block');
+    var attributeName;
+    var optionId;
+    var query = "&";
+    var url = "";
+    jQuery('.selected' + ':visible').each(function()
+    {
+        attributeName = jQuery(this).attr('data-attribute');
+        optionId = input_get_selected("#list_select_" + attributeName);
+        query = query + attributeName + "=" + optionId + "&";
+    });
+    url = baseUrl + controllerUrl + query;
+    jQuery.getJSON(
+        url,
+        function(data)
+        {
+            jQuery("#number_of_products").html(data["count"]);
+            for (var attribute in data)
+            {
+                <?php
+                    $checkString = "";
+                    foreach ($selectorAttributes as $attribute) {
+                        $checkString .= 'attribute != "' . $attribute->getAttributeCode() . '" && ';
+                    }
+                    $checkString = substr($checkString, 0, -4); // remove the last 4 chars (' && ');
+                ?>
+                if (<?= $checkString; ?>)
+                    continue
+                options = data[attribute];
+                tmp = "<option value='0'>" + jQuery("#list_label_"+ attribute).text() + "</option>\n";
+                for (var i = 0; i < options.length; i++)
+                    tmp += '<option value="' +  options[i]["value"] + '">' + options[i]["label"]  + "</option>\n";
+                jQuery("#list_select_"+ attribute).html(tmp);
+                jQuery("#list_select_" + attribute).trigger("chosen:updated");
+                jQuery("#list_" + attribute).show();
+                jQuery("#selected_" + attribute).hide();
+                input_set_selected("#list_select_" + attribute, 0);
+            }
+            jQuery("#find_products").attr("href", baseUrl + data["url"]);
+        }
+    )
+    .complete(function()
+    {
+        jQuery('#find_products').css('display', 'block');
+        jQuery('.loader').css('display', 'none');
+    });
+}
+
+
+jQuery(document).ready(function($)
+{
+    $(".list_select").on('change', function()
+    {
+        var attributeName;
+        if (input_get_selected($(this)) > 0)
+        {
+            attributeName = jQuery(this).attr('data-attribute');
+            $('#list_' + attributeName).hide();
+            $('#selected_' + attributeName).show();
+            $('#' + attributeName + '_product_value').html($("#list_select_" + attributeName + " option:selected").text());
+            refresh_form();
+        }
+    });
+    $(".selected").on('click', function()
+    {
+        var attributeName;
+        attributeName = jQuery(this).attr('data-attribute');
+        $('#list_' + attributeName).show();
+        $('#selected_' + attributeName).hide();
+        refresh_form();
+    });
+
+    $('.product_list').show();
+    $('.selected').hide();
+    $('.selected_newc').hide();
+    $('.close').click(function()
+    {
+        $('.search_button').trigger('click');
+    });
+
+    $( document ).ajaxComplete(function()
+    {
+        $( ".log" ).text( "Triggered ajaxComplete handler." );
+    });
+
+    $('.search_button').click(function()
+    {
+        $('.product_selector').fadeToggle();
+        $('#wrapper_selector').toggleClass('open');
+    });
+
+    $(window).resize(function()
+    {
+        if($(window).width() > 1023)
+        {
+            $('.product_selector').show('slow', function() {});
+        }
+    });
+
+    refresh_form();
+});
+//]]>
+</script>
+
+
+<?php endif; ?>
+

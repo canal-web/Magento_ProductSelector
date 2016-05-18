@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <tabs>
+        <productselector translate="label" module="productselector">
+            <label>Product Selector</label>
+            <sort_order>100</sort_order>
+        </productselector>
+    </tabs>
+    <sections>
+        <productselector translate="label" module="productselector">
+          <label>Configuration</label>
+          <tab>productselector</tab>
+          <frontend_type>text</frontend_type>
+          <sort_order>10</sort_order>
+          <show_in_default>1</show_in_default>
+          <show_in_website>1</show_in_website>
+          <show_in_store>1</show_in_store>
+          <groups>
+              <main translate="label" module="productselector">
+                  <label>Configuration</label>
+                  <frontend_type>text</frontend_type>
+                  <sort_order>1</sort_order>
+                  <show_in_default>1</show_in_default>
+                  <show_in_website>1</show_in_website>
+                  <show_in_store>1</show_in_store>
+                  <fields>
+                    <activation translate="label">
+                          <label>Activate</label>
+                          <comment>Display selector block, or not</comment>
+                          <frontend_type>select</frontend_type>
+                          <source_model>adminhtml/system_config_source_yesno</source_model>
+                          <sort_order>5</sort_order>
+                          <show_in_default>1</show_in_default>
+                          <show_in_website>1</show_in_website>
+                          <show_in_store>1</show_in_store>
+                      </activation>
+                      <title translate="label comment">
+                          <label>Block title</label>
+                          <comment>Hidden if empty</comment>
+                          <frontend_type>text</frontend_type>
+                          <sort_order>10</sort_order>
+                          <show_in_default>1</show_in_default>
+                          <show_in_website>1</show_in_website>
+                          <show_in_store>1</show_in_store>
+                          <validate>required_entry</validate>
+                          <depends>
+                              <activation>1</activation>
+                          </depends>
+                      </title>
+                      <list_page translate="label comment">
+                          <label>List page URL key</label>
+                          <comment>Address for the result page (pre-filtered product list) without .html</comment>
+                          <frontend_type>text</frontend_type>
+                          <sort_order>15</sort_order>
+                          <show_in_default>1</show_in_default>
+                          <show_in_website>1</show_in_website>
+                          <show_in_store>1</show_in_store>
+                          <validate>required_entry</validate>
+                          <depends>
+                              <activation>1</activation>
+                          </depends>
+                      </list_page>
+                      <attribute_set_id translate="label comment">
+                          <label>Attribute set ID</label>
+                          <comment>Attribute set to use</comment>
+                          <frontend_type>text</frontend_type>
+                          <sort_order>20</sort_order>
+                          <show_in_default>1</show_in_default>
+                          <show_in_website>1</show_in_website>
+                          <show_in_store>1</show_in_store>
+                          <validate>required_entry</validate>
+                          <depends>
+                              <activation>1</activation>
+                          </depends>
+                      </attribute_set_id>
+                  </fields>
+              </main>
+          </groups>
+      </productselector>
+    </sections>
+</config>

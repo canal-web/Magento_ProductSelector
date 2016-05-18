@@ -1,0 +1,13 @@
+{
+    "name": "canal-web/magento-productselector",
+    "type": "magento-module",
+    "description": "Create a block with dynamic filters redirecting to a pre-filtered category page",
+    "require": {
+    },
+    "authors":[
+      {
+            "name":"Deborah Jean",
+            "email":"deborah@canal-web.fr"
+        }
+    ]
+}

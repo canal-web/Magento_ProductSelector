@@ -1,0 +1,4 @@
+src/app/code/community/Canalweb/ProductSelector   app/code/community/Canalweb/ProductSelector  
+src/app/etc/modules/Canalweb_ProductSelector.xml  app/etc/modules/Canalweb_ProductSelector.xml 
+src/app/locale/en_US/Canalweb_ProductSelector.csv app/locale/en_US/Canalweb_ProductSelector.csv
+src/app/locale/fr_FR/Canalweb_ProductSelector.csv app/locale/fr_FR/Canalweb_ProductSelector.csv
