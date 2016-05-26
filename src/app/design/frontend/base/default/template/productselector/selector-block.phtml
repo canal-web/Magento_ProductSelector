@@ -36,6 +36,9 @@
                                 </div>
                                 <div id="selected_<?= $code; ?>" class="selected selected_<?= $code; ?>" style="display:none;" data-attribute="<?= $code; ?>">
                                     <label for="list_select_<?= $code; ?>"><?= $label; ?> : </label>
+									<?php if (Mage::helper('productselector/data')->isTypeYear($code)): ?>
+										<span class="minimum-label"><?= $this->__("above"); ?></span>
+									<?php endif; ?>
                                     <span id="<?= $code; ?>_product_value" class="product_value">product_value</span>
                                     <span class="close" title="<?= $this->__("Delete filter"); ?>"></span>
                                 </div>
