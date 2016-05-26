@@ -10,12 +10,21 @@ To call the block in your template :
 echo $this->getLayout()->createBlock('core/template')->setTemplate('productselector/selector-block.phtml')->toHtml();
 ```
 
-There is some basic configuration in System > Configuration > ProductSelector
+or from an xml layout :
+```xml
+<reference name="home">
+  <block type="page/template_links" name="product_selector" template="productselector/selector-block.phtml"/>
+</reference>
+```
+
+There is some basic configuration in System > Configuration > ProductSelector (important : you will need to specify there the attribute set you want to use).
 
 Important: for accentuated locales, be sure to check Manadev > SEO url keys (attributes and options should not be accentuated)
+
+Important 2: if you install this module via composer, remember to allow simlinks in system > config > developer > template, or copy the base template in your local theme.
 
 French translation inc.
 
 ## @TODO:
-- [ ] fresh test on a new website
+- [x] fresh test on a new website
 - [ ] handle prices, km, and other digit-based parameters
