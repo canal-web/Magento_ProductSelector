@@ -2,7 +2,7 @@
 Create a block with dynamic filters redirecting to a pre-filtered category page (using **Manadev** filters).
 
 ## Howto
-After installing the module, you should have two new fields on attributes edit page: "use in product selector" (set yes for each attribute you want to see as an input) and "type of attribute in selector" (let default value unless specific cases like year).
+After installing the module, you should have two new fields on attributes edit page: "use in product selector" (set yes for each attribute you want to see as an input) and "type of attribute in selector" (let default value unless specific cases like year). The attribute must be used in product listing.
 
 To call the block in your template :
 
