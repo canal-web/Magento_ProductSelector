@@ -24,7 +24,3 @@ Important: for accentuated locales, be sure to check Manadev > SEO url keys (att
 Important 2: if you install this module via composer, remember to allow simlinks in system > config > developer > template, or copy the base template in your local theme.
 
 French translation inc.
-
-## @TODO:
-- [x] fresh test on a new website
-- [ ] handle prices, km, and other digit-based parameters
