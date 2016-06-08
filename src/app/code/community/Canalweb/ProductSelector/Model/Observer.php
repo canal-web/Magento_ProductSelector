@@ -37,5 +37,9 @@ class Canalweb_ProductSelector_Model_Observer
             'values' => $typesArray,
             'label' => Mage::helper('core')->__('Type of attribute in selector')
         ), 'apply_to');
+        $fieldset->addField('selectorunit', 'text', array(
+            'name' => 'selectorunit',
+            'label' => Mage::helper('core')->__('Unit (used in selector)')
+        ), 'apply_to');
     }
 }

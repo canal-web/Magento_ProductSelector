@@ -26,6 +26,8 @@
                                 foreach ($selectorAttributes as $selectorAttribute):
                                     $code = $selectorAttribute->getAttributeCode();
                                     $label = $selectorAttribute->getStoreLabel();
+
+									if (!$helper->isTypePrice($code)) {
                             ?>
 
                                 <div id="list_<?= $code; ?>" class="selector selector_<?= $code; ?>">
@@ -34,7 +36,7 @@
                                         <option value=""><?= $label; ?></option>
                                     </select>
                                 </div>
-                                <div id="selected_<?= $code; ?>" class="selected selected_<?= $code; ?>" style="display:none;" data-attribute="<?= $code; ?>">
+                                <div id="selected_<?= $code; ?>" class="selected classic selected_<?= $code; ?>" style="display:none;" data-attribute="<?= $code; ?>">
                                     <label for="list_select_<?= $code; ?>"><?= $label; ?> : </label>
 									<?php if (Mage::helper('productselector/data')->isTypeYear($code)): ?>
 										<span class="minimum-label"><?= $this->__("above"); ?></span>
@@ -43,19 +45,38 @@
                                     <span class="close" title="<?= $this->__("Delete filter"); ?>"></span>
                                 </div>
 
+								<?php
+									// Price types: add range input !
+									// @TODO: ajouter l'unité (€/km) selon l'attribut ! (euh...css ?)
+									// aussi comment gérer la valeur max ? on pourrait le faire dynamiquement avec la vraie valeur max possible ce serait juste top !
+									// enfin, répercuter ces nouveaux développements sur le module github...
+									} else { ?>
+										<div id="selected_<?= $code; ?>" class="range selected selected_<?= $code; ?>" style="display:none;" data-attribute="<?= $code; ?>">
+											<label for="list_select_<?= $code; ?>"><?= $label; ?></label>
+											<input type="range" name="list_select_<?= $code; ?>" min="0" max="<?php echo $helper->getMaxValue($code); ?>" value="<?php echo $helper->getMaxValue($code); ?>" id="list_select_<?= $code; ?>" class="range_select">
+											<span id="<?= $code; ?>_product_value" class="product_value">
+												<?php echo $helper->getMaxValue($code); ?>
+												<?php if ($helper->getUnit($code)): ?>
+													<span class="unit"><?php echo $helper->getUnit($code); ?></span>
+												<?php endif; ?>
+											</span>
+										</div>
+								<?php
+									}
+								?>
                             <?php endforeach; ?>
+
+
+							<div id="occ_product_count">
+								<span id="number_of_products"></span>
+								<span id="occ_voitures"><?= $this->__("products_term"); ?></span>
+								<span id="occ_legende"><?= $this->__("corresponding to your research"); ?></span>
+							</div>
 
                             <div class="submit">
                                 <a id="find_products" class="button btn-maincolor" href="" rel="nofollow"><?= $this->__("Search"); ?></a>
                                 <img class="loader" src="<?php echo $this->getSkinUrl('images/loader.gif'); ?>" style="display:none;"/>
                             </div>
-
-                            <div id="occ_product_count">
-                              <span id="number_of_products"></span>
-                              <span id="occ_voitures"><?= $this->__("products_term"); ?></span>
-                              <span id="occ_legende"><?= $this->__("corresponding to your research"); ?></span>
-                            </div>
-
                         </form>
                     </div>
                 </div>
@@ -135,6 +156,7 @@ function refresh_form()
                 jQuery("#list_select_" + attribute).trigger("chosen:updated");
                 jQuery("#list_" + attribute).show();
                 jQuery("#selected_" + attribute).hide();
+				jQuery('.range').show(); // pricetypes should never disappear
                 input_set_selected("#list_select_" + attribute, 0);
             }
             jQuery("#find_products").attr("href", baseUrl + data["url"]);
@@ -162,7 +184,7 @@ jQuery(document).ready(function($)
             refresh_form();
         }
     });
-    $(".selected").on('click', function()
+    $(".selected.classic").on('click', function()
     {
         var attributeName;
         attributeName = jQuery(this).attr('data-attribute');
@@ -170,6 +192,11 @@ jQuery(document).ready(function($)
         $('#selected_' + attributeName).hide();
         refresh_form();
     });
+	$(".range_select").on('change', function() {
+		var valof = $(this).val();
+  		$(this).parent().find('.product_value').text(valof);
+        refresh_form();
+	});
 
     $('.product_list').show();
     $('.selected').hide();

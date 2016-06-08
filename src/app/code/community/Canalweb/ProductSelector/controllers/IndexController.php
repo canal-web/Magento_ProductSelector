@@ -28,8 +28,6 @@ class Canalweb_ProductSelector_IndexController extends Mage_Core_Controller_Fron
             $code = $selectorAttribute->getAttributeCode();
             $params[] = $code;
             // add special treatment for special fields
-            // right now, only year-type, but @TODO km/prices
-            // see $paramsShort [= $paramsTypePrices] & $paramsShortReverse in old code for that
             if (Mage::helper('productselector/data')->isTypeYear($code)) {
                 $paramsTypeYear[] = $code;
             } elseif (Mage::helper('productselector/data')->isTypePrice($code)) {
@@ -56,7 +54,9 @@ class Canalweb_ProductSelector_IndexController extends Mage_Core_Controller_Fron
             } elseif (in_array($param, $paramsTypePrices)) {
                 $comparatorOperator = '<=';
                 $typePrice = true;
+                $doNotReturn[$param] = $param; // we do not need an array of options in response
             }
+
 
             if ($typePrice) {
                 if ($i == 0) $select .= "FLOOR(f." . $param . ") AS $param, FLOOR(f." . $param . ") AS " . $param . '_value';
@@ -70,7 +70,6 @@ class Canalweb_ProductSelector_IndexController extends Mage_Core_Controller_Fron
                 $value = (int) $this->getRequest()->getParam($param, false);
                 if ($typePrice) {
                     $where .= " AND " . $param . $comparatorOperator . $value;
-                    $doNotReturn[$param] = $param; // we do not need an array of options in response
                     if (Mage::helper('productselector/data')->isTypeYear($param)) {
                         // we make an exception for "year"-type attributes
                         $maxValue = date("Y");
