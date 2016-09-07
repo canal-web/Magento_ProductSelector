@@ -17,10 +17,10 @@ or from an xml layout :
 </reference>
 ```
 
-There is some basic configuration in System > Configuration > ProductSelector (important : you will need to specify there the attribute set you want to use).
+There is some basic configuration in System > Configuration > Canal Web > ProductSelector (important : you will need to specify there the attribute set you want to use).
 
-Important: for accentuated locales, be sure to check Manadev > SEO url keys (attributes and options should not be accentuated)
+Important: for accentuated locales, be sure to check the Manadev > SEO url keys (attributes and options should not be accentuated)
 
-Important 2: if you install this module via composer, remember to allow simlinks in system > config > developer > template, or copy the base template in your local theme.
+Important 2: if you install this module via composer, remember to allow simlinks in System > Config > Developer > Template.
 
 French translation inc.
