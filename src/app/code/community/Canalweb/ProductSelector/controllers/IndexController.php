@@ -20,9 +20,7 @@ class Canalweb_ProductSelector_IndexController extends Mage_Core_Controller_Fron
         $attributeSetId = Mage::getStoreConfig('productselector/main/attribute_set_id');
 
         // fetch all selectorized params
-        $params = array();
-        $paramsTypeYear = array();
-        $paramsTypePrices = array();
+        $params = $paramsTypeYear = $paramsTypePrices = $positions = array();
         $selectorAttributes = Mage::helper('productselector/data')->getSelectorAttributes($attributeSetId);
         foreach ($selectorAttributes as $selectorAttribute) {
             $code = $selectorAttribute->getAttributeCode();
@@ -129,6 +127,7 @@ class Canalweb_ProductSelector_IndexController extends Mage_Core_Controller_Fron
                 $item = array();
                 $item["value"] = $result[$param];
                 $item["label"] = $result[$param."_value"];
+                $positions[$result[$param]] = $result[$param];
 
                 if ($item["label"] != null && !in_array($result[$param], $dummyArray)) {
                     if ((!array_key_exists($param, $inputParams)) || (array_key_exists($param, $getInputParams)) ) {
@@ -146,6 +145,35 @@ class Canalweb_ProductSelector_IndexController extends Mage_Core_Controller_Fron
                 );
             }
         } // end foreach params
+
+        /* Get positions of all available options */
+        $positionsString = implode(',', $positions);
+        $positionsSqlQuery = 'SELECT option_id, sort_order FROM eav_attribute_option WHERE option_id IN ('.$positionsString.');';
+        $positionsResponse = $readConnection->fetchAll($positionsSqlQuery);
+        $positionsResult = array();
+        foreach ($positionsResponse as $key => $value) {
+            $positionsResult[$value['option_id']] = $value['sort_order'];
+        }
+
+
+        /* Add positions values to existing response object */
+        foreach ($response as $attributeKey => $selectorElement) {
+            foreach ($selectorElement as $key => $option) {
+                $response[$attributeKey][$key]['position'] = $positionsResult[$option['value']];
+            }
+        }
+
+        /* Sort them all */
+        function sortByPosition($a, $b) {
+            if ($a['position'] == $b['position']) {
+                return 0;
+            }
+            return ($a['position'] < $b['position']) ? -1 : 1;
+        }
+        foreach ($response as $attributeKey => $selectorElement) {
+            usort($selectorElement, 'sortByPosition');
+            $response[$attributeKey] = $selectorElement;
+        }
 
 
         /*
